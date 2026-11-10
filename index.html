@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f5f7f4"><title>NanoAgent — local coding agent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-icon">n<span>·</span></div><span>Nano<span class="brand-light">Agent</span></span><span class="version">LOCAL</span></div>
+      <div class="workspace-tag"><span class="green-dot"></span> LOCAL WORKSPACE</div>
+      <div class="repo-mini"><div class="repo-glyph">⌘</div><div><b id="repoName">Choose a repository</b><small id="repoPathShort">Local files stay on this machine</small></div><button id="editRepo" title="Change repository">↗</button></div>
+      <div class="side-label">TASKS</div>
+      <button class="side-link active" id="newTask"><span>＋</span> New task</button>
+      <div class="side-link muted"><span>◷</span> Recent runs <small>LOCAL</small></div>
+      <div class="side-rule"></div>
+      <div class="side-label">GUARDRAILS</div>
+      <div class="guard-item"><span class="guard-check">✓</span><span>Approval before writes</span></div>
+      <div class="guard-item"><span class="guard-check">✓</span><span>Budget checked before calls</span></div>
+      <div class="guard-item"><span class="guard-check">✓</span><span>Confidential stays local</span></div>
+      <div class="sidebar-bottom"><div class="budget-card"><div class="budget-heading"><span>Task budget</span><button id="budgetEdit">RESET</button></div><div class="budget-amount"><span id="budgetUsed">$0.00</span><small> reserved this session</small></div><div class="budget-track"><span id="budgetBar"></span></div><div class="budget-foot"><span id="budgetLimitText">$0.50 limit</span><span id="budgetLeft">$0.50 left</span></div></div><div class="offline-note"><span class="offline-dot"></span><span>App server: <b>on this device</b></span></div></div>
+    </aside>
+    <main class="main">
+      <header class="topbar"><div class="crumb">NanoAgent <span>/</span> <b>Task workspace</b></div><div class="top-right"><div class="mode-pill" id="modePill"><span></span> LOCAL MODE</div><button class="icon-btn" id="settingsBtn" title="Settings">⚙</button><div class="user-mark">N</div></div></header>
+      <div class="page">
+        <section class="hero"><div><div class="overline"><span class="overline-mark">✳</span> THE TOKEN-SMART CODING AGENT</div><h1>Give your codebase<br>a <em>smaller</em> AI footprint.</h1><p>Point NanoAgent at a repo. It finds the relevant code, plans a change,<br class="wide-only"> then waits for your approval before writing.</p></div><div class="hero-chip"><span class="lock">⌂</span><div><b>Your repo stays local</b><small>Cloud calls only in standard mode</small></div></div></section>
+        <section class="setup-row"><div class="setup-field repo-field"><label>REPOSITORY FOLDER</label><div class="input-wrap"><span class="field-icon">⌘</span><input id="repoInput" spellcheck="false" placeholder="Paste the full path to a project folder"><button id="useDemo" class="demo-link">Use demo repo</button></div></div><div class="setup-field budget-field"><label>MAX SPEND · THIS SESSION</label><div class="budget-input-wrap"><span>$</span><input id="budgetInput" type="number" min="0" step="0.05" value="0.50"></div></div></section>
+        <section class="task-card"><div class="card-head"><div class="card-title"><span class="step-tag">01</span><div><b>What should NanoAgent do?</b><small>Describe a bug fix, feature, or refactor</small></div></div><div class="task-types"><button data-kind="fix" class="type active">Bug fix</button><button data-kind="implement" class="type">Feature</button><button data-kind="refactor" class="type">Refactor</button></div></div><textarea id="taskInput" placeholder="e.g. Fix the login bug when passwords contain special characters"></textarea><div class="card-bottom"><label class="confidential-toggle"><input type="checkbox" id="confidential"><span class="toggle-ui"></span><span><b>Confidential repository</b><small>Local Ollama only · no Tavily or cloud requests</small></span><span class="privacy-lock">⌑</span></label><div class="run-controls"><div class="provider-select"><span class="provider-led" id="providerLed"></span><select id="provider"><option value="ollama">Ollama · local</option><option value="bifrost">Bifrost · cloud gateway</option></select></div><button class="primary-btn" id="planBtn"><span>Plan task</span><b>↗</b></button></div></div></section>
+        <div class="flowline"><span class="flow-label">AGENT FLOW</span><div class="flow-steps"><span class="flow-step current"><i>1</i> Find relevant code</span><b>→</b><span class="flow-step"><i>2</i> Check budget</span><b>→</b><span class="flow-step"><i>3</i> Propose diff</span><b>→</b><span class="flow-step"><i>4</i> Your approval</span></div><button id="infoBtn" title="Only selected files are sent to the model">ⓘ</button></div>
+        <section class="results-grid"><article class="panel activity"><div class="panel-head"><div><h2>Task activity</h2><p id="activitySub">Your plan and repository scan appear here</p></div><span class="run-status" id="runStatus">READY</span></div><div id="activityBody" class="activity-body"><div class="empty-state"><div class="empty-icon">{ }</div><b>Ready to work in your repo</b><p>Choose a folder, describe a task, and NanoAgent<br>will map the smallest useful slice of code.</p></div></div></article><article class="panel impact"><div class="panel-head"><div><h2>Run snapshot</h2><p>Measured for this task</p></div><span class="snapshot-mark">◉</span></div><div class="snapshot-metrics"><div><label>FILES READ</label><strong id="filesMetric">—</strong><small id="filesSub">No source loaded</small></div><div><label>INPUT TOKENS</label><strong id="tokensMetric">—</strong><small id="tokensSub">Estimate before call</small></div><div><label>SPEND</label><strong id="costMetric">$0.00</strong><small id="costSub">Reserved before each call</small></div><div><label>ELAPSED</label><strong id="timeMetric">—</strong><small>Task duration</small></div></div><div class="impact-note"><span>↗</span><p>Read selectively. Measure honestly.<br><b>No fixed savings claims.</b></p></div><div class="provider-foot"><span>MODEL ROUTE</span><b id="routeLabel">Ollama · awaiting task</b></div></article></section>
+        <footer><span>NANOAGENT <i>·</i> LOCAL-FIRST CODING AGENT</span><span>Read less. Change safely.</span></footer>
+      </div>
+    </main>
+  </div>
+  <div id="modalRoot"></div><div id="toast" class="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
